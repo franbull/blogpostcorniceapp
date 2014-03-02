@@ -18,3 +18,11 @@ class Task(Base):
     @classmethod
     def from_json(cls, data):
         return cls(**data)
+
+    def to_json(self):
+        to_serialize = ['task_id', 'name', 'description']
+        d = {}
+        for attr_name in to_serialize:
+            d[attr_name] = getattr(self, attr_name)
+        return d
+
