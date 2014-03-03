@@ -1,4 +1,4 @@
 Documentation
 =============
 
-Put a brief description of 'blogpostcorniceapp'.
+A simple example of how to use sqlalchemy and Cornice together.
