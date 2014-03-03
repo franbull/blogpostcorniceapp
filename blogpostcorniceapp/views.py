@@ -1,5 +1,6 @@
 
 from cornice.resource import resource
+from cornice.resource import view
 
 from blogpostcorniceapp.models import Task
 from blogpostcorniceapp.models import DBSession
@@ -18,13 +19,17 @@ class TaskResource(object):
                     ]
             }
 
+    @view(validators=('validate_post',))
     def collection_post(self):
         """Adds a new task."""
         task = self.request.json
-        num_existing = DBSession.query(Task).filter(Task.name==task['name']).count()
-        if num_existing > 0:
-            raise Exception('That task already exists!')
         DBSession.add(Task.from_json(task))
 
     def get(self):
         return DBSession.query(Task).get(int(self.request.matchdict['id'])).to_json()
+
+    def validate_post(self, request):
+        name = request.json['name']
+        num_existing = DBSession.query(Task).filter(Task.name==name).count()
+        if num_existing > 0:
+            request.errors.add(request.url, 'Non-unique task name.', 'There is already a task with this name.')
